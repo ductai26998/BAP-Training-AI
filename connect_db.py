@@ -35,7 +35,7 @@ class Database:
         except:
             print("Can't get data !!!")
 
-    def insert(self, sql: str, *args):
+    def insert_item(self, sql: str, *args):
         """
             insert function is used to insert a new record into your table database.
             It receive an args contain name, address, age make variable
@@ -43,6 +43,18 @@ class Database:
         try:
             # sql = "INSERT INTO customers(name, address, age) VALUES (%s, %s, %s)"
             self.my_cursor.execute(sql, args)
+            self.conn.commit()
+        except:
+            print("Can't Insert !!!")
+
+    def insert_list(self, items):
+        """
+            insert function is used to insert a new record into your table database.
+            It receive an args contain name, address, age make variable
+        """
+        try:
+            sql = "INSERT INTO customers(name, address, age) VALUES (%s, %s, %s)"
+            self.my_cursor.executemany(sql, items)
             self.conn.commit()
         except:
             print("Can't Insert !!!")
@@ -86,7 +98,7 @@ def testInsert():
     new_address = input("Enter new address: ")
     age = int(input("Enter age: "))
     params = (new_name, new_address, age)
-    my_db.insert(sql, *params)
+    my_db.insert_item(sql, *params)
 
 def testUpdate():
     sql = "UPDATE customers SET name=%s, address=%s, age=%s WHERE name=%s"
@@ -106,3 +118,5 @@ def testDelete():
 # testInsert()
 # testDelete()
 
+# items = [('You', 'ngo quyen', 23), ('Hoc', 'ngo si lien', 20)]
+# my_db.insert_list(items)
