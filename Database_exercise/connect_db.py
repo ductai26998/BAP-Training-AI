@@ -31,7 +31,7 @@ class Database:
         except:
             print("Can't connect database !!!")
 
-    def _get_all(self, sql: str):
+    def get_all(self, sql: str):
         """
             get all record from table database
             input: sql query
@@ -44,7 +44,7 @@ class Database:
         except:
             print("Can't get data !!!")
 
-    def _get_item(self, sql: str, *params):
+    def get_item(self, sql: str, *params):
         """
             get the first record which fit with condition
             input: sql query: string, params: tuple contain the conditions
@@ -57,7 +57,7 @@ class Database:
         except:
             print("Can't get data !!!")
 
-    def _insert_item(self, sql: str, *args):
+    def insert_item(self, sql: str, *args):
         """
             insert a new record into your table database.
             input: sql query: string, an args contain fields: tuple
@@ -68,7 +68,7 @@ class Database:
         except:
             print("Can't Insert !!!")
 
-    def _insert_list(self, sql: str, items):
+    def insert_list(self, sql: str, items):
         """
             insert a new record list into your table database.
             input: sql query: string, items: a list tuple contain the records
@@ -79,7 +79,7 @@ class Database:
         except:
             print("Can't Insert !!!")
 
-    def _update(self, sql: str, *args):
+    def update(self, sql: str, *args):
         """
             update a specifically record by old_name in your table database.
             input: sql query: string, a tuple contain the fields
@@ -90,7 +90,7 @@ class Database:
         except:
             print("Can't update!!!")
 
-    def _delete(self, sql: str, *params):
+    def delete(self, sql: str, *params):
         """
            delete a record in your table database by the name record.
            input: sql query: string, params: tuple contain the conditions
