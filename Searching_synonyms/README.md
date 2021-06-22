@@ -2,6 +2,7 @@
 
 ## Set up
 **Install python and pip: [Here](https://www.python.org/downloads/)**
+
 **Install virtual environment for Searching_synonyms project:**
 ```php
 python -m venv Searching_synonyms
