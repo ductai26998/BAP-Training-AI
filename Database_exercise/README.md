@@ -1,12 +1,12 @@
 # Database connector
 ## Setup
-** Install mysql-connector-python: **
+**Install mysql-connector-python:**
 ```php
 pip install mysql-connector-python
 ```
 
 ## Usage
-** Function **
+**Function**
 * connect_database: private
 * get_all: public
 * get_item: public
