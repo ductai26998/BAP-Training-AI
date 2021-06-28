@@ -1,5 +1,6 @@
 import connect_db as db
 import scrapy_data as scrapy
+import json
 
 # Connect to database
 my_db = db.Database(host='localhost',
@@ -38,7 +39,8 @@ def scrape_and_insert():
     for word in words:
         word_url = "https://www.thesaurus.com/browse/" + word
         synonyms = scrapy.scrape(word_url, synonyms_selector)
-        insert_record(word, str(synonyms))
+        json_str = json.dumps(synonyms)
+        insert_record(word, json_str)
         print(count)
         count = count + 1
 
@@ -48,11 +50,12 @@ def search(word: str):
     """
     sql = "SELECT synonyms FROM synonyms WHERE word=%s"
     params = (word,)
-    synonyms = my_db.get_item(sql, *params)
+    synonyms_json = my_db.get_item(sql, *params)
+    synonyms = json.load(synonyms_json)
     print("synonyms of {}: ".format(word))
     for synonym in synonyms:
         print(synonym)
 
-# scrape_and_insert()
-keyword = input("Enter the keyword: ")
-search(keyword)
+scrape_and_insert()
+# keyword = input("Enter the keyword: ")
+# search(keyword)
