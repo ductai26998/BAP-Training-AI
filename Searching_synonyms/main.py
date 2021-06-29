@@ -50,12 +50,13 @@ def search(word: str):
     """
     sql = "SELECT synonyms FROM synonyms WHERE word=%s"
     params = (word,)
-    synonyms_json = my_db.get_item(sql, *params)
-    synonyms = json.load(synonyms_json)
+    synonyms_json = my_db.get_item(sql, *params)[0]
+
+    synonyms = json.loads(synonyms_json)
     print("synonyms of {}: ".format(word))
-    for synonym in synonyms:
+    for synonym in list(synonyms):
         print(synonym)
 
-scrape_and_insert()
-# keyword = input("Enter the keyword: ")
-# search(keyword)
+# scrape_and_insert()
+keyword = input("Enter the keyword: ")
+search(keyword)
