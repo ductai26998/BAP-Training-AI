@@ -1,12 +1,13 @@
 import numpy as np
 import cv2 as cv
 
-def detect_color(img, thresholds):
+def detect_color(img, thresholds: list):
     """
-        detect color and return (x,y) coordinate of that point
+        detect colors and return (x,y) coordinate and index of color of that points
         params:
             img: image_input
-            lower_color: lower threshold of color
+            thresholds: thresholds of colors
+        return: list
     """
     points = []
     # covert img to hsv image
@@ -22,17 +23,28 @@ def detect_color(img, thresholds):
         points.append((point))
     return points
 
-def draw(points, colors):
+def draw(points: list, colors: list):
+    """
+        draw color on the images in video camera
+        params:
+            points: the points need to draw
+            colors: list of colors need to draw
+    """
     for point in points:
         cv.circle(img, (point[0], point[1]), 10, colors[point[2]], -1)
 
 def get_position(img):
+    """
+        get coordinate of 1 bits in the img
+        params:
+            img: gray image
+    """
     # find all contours in image
     contours, hierarchy = cv.findContours(img, cv.RETR_EXTERNAL, cv.CHAIN_APPROX_NONE)
     x, y, w, h = 0, 0, 0, 0
     for contour in contours:
         area = cv.contourArea(contour) # return numbers of pixel not 0
-        if area > 500:
+        if area > 250:
             # calculates a contour perimeter is closed
             p = cv.arcLength(contour, True)
 
@@ -45,18 +57,12 @@ def get_position(img):
     return x + w // 2, y
 
 # set and load video from camera
-frameWidth = 640
-frameHeight = 480
 cap = cv.VideoCapture(0)
-cap.set(3, frameWidth)
-cap.set(4, frameHeight)
-cap.set(10,150)
-# img = cv.imread('but.jpg')
 
 points = []
 
 # define range of red color in HSV
-lower_red = np.array([0, 10, 100])
+lower_red = np.array([0, 100, 20])
 upper_red = np.array([10, 255, 255])
 red = [0, 0, 255]
 
