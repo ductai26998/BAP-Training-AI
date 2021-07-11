@@ -1,6 +1,7 @@
 import cv2 as cv
-import numpy as np
+import imutils
 from Image import Image
+import math
 
 
 class Answer(Image):
@@ -12,13 +13,37 @@ class Answer(Image):
         """
         return all contours of answer box with dilate iterations = 2
         """
-        contours, _ = cv.findContours(self.dilate_img(2), cv.RETR_EXTERNAL, cv.CHAIN_APPROX_NONE)
+        contours, _ = cv.findContours(self.dilate_img(1), cv.RETR_EXTERNAL, cv.CHAIN_APPROX_NONE)
+
         answer_box_cnts = []
         for cnt in contours:
             x, y, w, h = cv.boundingRect(cnt)
             if h > 100 and 800 < w < 1600:
                 answer_box_cnts.append(cnt)
         return answer_box_cnts
+
+    # def get_contours(self):
+    #     contours, hierarchy = cv.findContours(self.dilate_img(1), cv.RETR_EXTERNAL, cv.CHAIN_APPROX_NONE)
+    #     for i in range(len(contours)):
+    #         x, y, w, h = cv.boundingRect(contours[i])
+    #         if h > 100 and 800 < w < 1600:
+    #             # cv.drawContours(self.img, cnt, -1, (0, 0, 255), 3)
+    #             x = tuple((contours[i], hierarchy[0][i]))
+    #             c = imutils.grab_contours(x)
+    #             # c = max(cnt, key=cv.contourArea)
+    #             # c1 = min(cnt, key=cv.contourArea)
+    #
+    #             # determine the most extreme points along the contour
+    #             ext_left = tuple(c[c[:, :, 0].argmin()][0])
+    #             ext_right = tuple(c[c[:, :, 0].argmax()][0])
+    #             ext_top = tuple(c[c[:, :, 1].argmin()][0])
+    #             ext_bottom = tuple(c[c[:, :, 1].argmax()][0])
+    #
+    #             cv.drawContours(self.img, [c], -1, (0, 255, 255), 2)
+    #             cv.circle(self.img, ext_left, 8, (0, 0, 255), -1)
+    #             cv.circle(self.img, ext_right, 8, (0, 255, 0), -1)
+    #             cv.circle(self.img, ext_top, 8, (255, 0, 0), -1)
+    #             cv.circle(self.img, ext_bottom, 8, (255, 255, 0), -1)
 
     def draw_rect(self):
         """
@@ -38,42 +63,21 @@ class Answer(Image):
         """
 
         for cnt in contours:
-            x, y, w, h = cv.boundingRect(cnt)
-
-            # if h > 100 and 800 < w < 1600:
             cv.drawContours(self.img, cnt, -1, (0, 0, 255), 3)
-
-        # for cnt in contours:
-        #     x, y, w, h = cv.boundingRect(cnt)
-        #     a, b, c = cnt.shape
-        #     std_up = cnt[:(a//2),0,1].mean(axis=0)
-        #     min_up = cnt[:(a//2),0,1].min(axis=0)
-        #
-        #     std_down = cnt[(a//2):,0,1].mean(axis=0)
-        #     max_down = cnt[(a//2):,0,1].max(axis=0)
-        #     for i in range(a//2):
-        #         u = cnt[i, 0, 1]
-        #         if cnt[i, 0, 1] > std_up:
-        #             cnt[i, 0, 1] = min_up
-        #     for i in range(a//2, a):
-        #         if cnt[i, 0, 1] < std_down:
-        #             cnt[i, 0, 1] = max_down
-        #     if h > 100 and 800 < w < 1600:
-        #         cv.drawContours(self.img, cnt, -1, (0, 0, 255), 3)
 
     def draw_tick(self):
         """
         draw ticks with the known coordinates
         """
         points = [(600, 1750),
-                  (600, 1300),
+                  (600, 1220),
                   (600, 900),
                   (600, 700),
-                  (600, 600),
+                  (600, 500),
                   (1000, 500),
                   (1000, 700),
                   (1000, 900),
-                  (1000, 1200),
+                  (1000, 1250),
                   (1000, 1750)]
         for point in points:
             cv.circle(self.img, point, radius=15, color=(0, 0, 255), thickness=-1)
@@ -87,19 +91,18 @@ class Answer(Image):
         contours = self.find_contours()
         filtered_contours = []
         for cnt in contours:
-            x, y, w, h = cv.boundingRect(cnt)
-
-            if h > 100 and 800 < w < 1600:
-                for point in self.points:
-                    if x <= point[0] <= x + w and y <= point[1] <= y + h:
-                        filtered_contours.append(cnt)
-                        continue
+            for point in self.points:
+                if cv.pointPolygonTest(cnt, point, True) >= 0:
+                    filtered_contours.append(cnt)
+                    continue
 
         return filtered_contours
 
 
-image_1 = Answer('./data/images/7.png')
+image_1 = Answer('./data/images/2.png')
 image_1.draw_tick()
 contours_1 = image_1.filter_answer_box()
+# contours_1 = image_1.find_contours()
 image_1.draw_contours(contours_1)
+# image_1.get_contours()
 image_1.show_img()
