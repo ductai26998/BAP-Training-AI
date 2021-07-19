@@ -25,8 +25,8 @@ def initial_data(N: int = 1000, D: int = 2, K: int = 3, data_name: str = 'data.p
     # lets visualize the data:
     fig = plt.figure(1)
     plt.scatter(X[:, 0], X[:, 1], c=y, s=40, cmap=plt.cm.Spectral)
-    fig.show()
-    fig.savefig(data_name)
+    plt.show()
+    # fig.savefig(data_name)
     return X, y
 
 def remap(y, K):

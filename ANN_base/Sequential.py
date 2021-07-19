@@ -159,31 +159,37 @@ class Sequential:
             activation = self.activations[l - 1]
             self.a[l] = self.activstion_func(activation)(self.z[l])
 
-    def cost_function(self, y: np.ndarray, h: np.ndarray) -> float:
+    def cost_function(self, y: np.ndarray, h: np.ndarray, _lambda: float) -> float:
         """
         Compute the cost function of model
 
         Parameters:
             y: np.ndarray: The real output
             h: np.ndarray: The hypothesis output
+            _lambda: float: The factor of regularization
         """
         m = y.shape[0]
         cost = np.sum(-y * np.log(h) - (1 - y) * np.log(1 - h))
-        return (1 / m) * cost
+        for i in range(y.shape[1]):
+            sub_regularization = np.sum(self.W[i][1:] ** 2)
+        regularization = (_lambda / (2 * m)) * sub_regularization
+        return (1 / m) * cost + regularization
 
-    def backpropagation(self, y: np.ndarray, h: np.ndarray):
+    def backpropagation(self, y: np.ndarray, h: np.ndarray, _lambda):
         """
         Compute the values of model with backpropagation
 
         Parameters:
-
+            y: np.ndarray: The real output
+            h: np.ndarray: The hypothesis output
+            _lambda: float: The factor of regularization
         """
         m = y.shape[0]
         self.da[self.L - 1] = -np.divide(y, h) + np.divide(1 - y, 1 - h)
         for l in reversed(range(1, self.L)):
             activation = self.activations[l - 1]
             self.dz[l] = self.da[l] * self.derivation_func(activation)(self.z[l])
-            self.dW[l] = (1 / m) * (self.dz[l].T @ self.a[l - 1])
+            self.dW[l] = (1 / m) * (self.dz[l].T @ self.a[l - 1]) + (_lambda / m) * self.W[l]
             self.db[l] = (1 / m) * np.sum(self.dz[l], axis=0)
             self.da[l - 1] = self.dz[l] @ self.W[l]
 
@@ -194,6 +200,7 @@ class Sequential:
         Parameters:
             alpha: float: learning rate
         """
+
         for l in range(1, self.L):
             self.W[l] = self.W[l] - alpha * self.dW[l]
             self.b[l] = self.b[l] - alpha * self.db[l]
@@ -215,11 +222,12 @@ class Sequential:
         Train model
         """
         cost_history = []
+        _lambda = 0.1
         for i in range(epochs):
             self.feedforward(X_train)
-            cost_func = self.cost_function(y_train, self.a[self.L - 1])
+            cost_func = self.cost_function(y_train, self.a[self.L - 1], _lambda)
             cost_history.append(cost_func)
-            self.backpropagation(y_train, self.a[self.L - 1])
+            self.backpropagation(y_train, self.a[self.L - 1], _lambda)
             self.update_model(learning_rate)
             print("Training time: ", i + 1, " with loss: ", cost_func)
 
@@ -251,7 +259,7 @@ class Sequential:
         plt.plot(self.loss)
         plt.xlabel('train times')
         plt.ylabel('Loss')
-        fig.show()
+        plt.show()
         fig.savefig("loss.png")
 
     def accuracy(self, x_val: np.ndarray, y_val: np.ndarray):
