@@ -2,34 +2,43 @@ import numpy as np
 
 
 class Activation:
+  @staticmethod
   def sigmoid(z: np.ndarray):
     return 1 / (1 + np.exp(-z))
 
+  @staticmethod
   def sigmoid_derivation(z: np.ndarray):
     a = Activation.sigmoid(z)
     return a * (1 - a)
 
+  @staticmethod
   def tanh(z: np.ndarray):
-    # return 2 * self.sigmoid(2 * z) - 1
     return np.tanh(z)
 
+  @staticmethod
   def tanh_derivation(z: np.ndarray):
     return 4 * Activation.sigmoid_derivation(2 * z)
 
+  @staticmethod
   def ReLU(z: np.ndarray):
     return np.maximum(z, 0)
 
+  @staticmethod
   def ReLU_derivation(z: np.ndarray):
-    return 0 if z <= 0 else 1
+    return np.where(z <= 0, 0, 1)
 
-  def ELU(alpha: int, z: np.ndarray):
-    return z if z >= 0 else alpha * (np.exp(z) - 1)
+  @staticmethod
+  def ELU(z: np.ndarray, alpha: float = 0.1):
+    return np.where(z >= 0, z, alpha * (np.exp(z) - 1))
 
-  def ELU_derivation(alpha: int, z: np.ndarray):
-    return 1 if z >= 0 else alpha * np.exp(z)
+  @staticmethod
+  def ELU_derivation(z: np.ndarray, alpha: float = 0.1):
+    return np.where(z >= 0, 1, alpha * np.exp(z))
 
-  def Leaky_ReLU(alpha, z: np.ndarray):
+  @staticmethod
+  def Leaky_ReLU(z: np.ndarray, alpha: float = 0.1):
     return np.where(z >= 0, z, z * alpha)
 
-  def Leaky_ReLU_derivation(alpha, z: np.ndarray):
-    return alpha if z <= 0 else 1
+  @staticmethod
+  def Leaky_ReLU_derivation(z: np.ndarray, alpha: float = 0.1):
+    return np.where(z <= 0, alpha, 1)
