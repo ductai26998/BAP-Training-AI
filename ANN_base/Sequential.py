@@ -170,7 +170,7 @@ class Sequential:
         """
         m = y.shape[0]
         cost = np.sum(-y * np.log(h) - (1 - y) * np.log(1 - h))
-        for i in range(y.shape[1]):
+        for i in range(self.L):
             sub_regularization = np.sum(self.W[i][1:] ** 2)
         regularization = (_lambda / (2 * m)) * sub_regularization
         return (1 / m) * cost + regularization
@@ -260,7 +260,7 @@ class Sequential:
         plt.xlabel('train times')
         plt.ylabel('Loss')
         plt.show()
-        fig.savefig("loss.png")
+        # fig.savefig("loss.png")
 
     def accuracy(self, x_val: np.ndarray, y_val: np.ndarray):
         """
