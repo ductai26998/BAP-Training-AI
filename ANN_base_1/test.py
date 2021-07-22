@@ -14,13 +14,13 @@ df = pd.read_csv("./data/archive/mnist_train.csv")
 data_train = df.values
 y_train = data_train[:2000, 0]
 y_train_mapped = remap(y_train, 10)
-x_train = data_train[:2000, 1:]
+x_train = data_train[:2000, 1:] / 255.0
 
 # Model
 model = Sequential()
 model.add(layer_name='input', n_unit=784, activation=None)
-model.add(layer_name='dense', n_unit=200, activation='sigmoid')
-model.add(layer_name='dense', n_unit=100, activation='sigmoid')
+model.add(layer_name='dense', n_unit=256, activation='sigmoid')
+model.add(layer_name='dense', n_unit=128, activation='sigmoid')
 model.add(layer_name='output', n_unit=10, activation='sigmoid')
 
 # Summary model
@@ -33,11 +33,11 @@ model.plotloss()
 df = pd.read_csv("./data/archive/mnist_test.csv")
 
 data_test = df.values
-y_test = data_test[:100, 0]
+y_test = data_test[:200, 0]
 y_test_mapped = remap(y_test, 10)
-x_test = data_test[:100, 1:] / 255
+x_test = data_test[:200, 1:] / 255.0
 
-pre = model.predict(x_test[1:10])
+pre = model.predict(x_test)
 print(pre)
 print(model.accuracy(x_test, y_test_mapped))
 
